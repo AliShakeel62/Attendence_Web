@@ -1,14 +1,39 @@
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
+import "../node_modules/bootstrap/dist/css/bootstrap-grid.min.css"
 import Sidemenu from "./Component/menu";
-import {} from "react-router-dom"
+import {createBrowserRouter , RouterProvider} from "react-router-dom"
 import "./App.css";
+import Navbar from "./Component/Navbar";
+import Home from "./Pages/Home";
+import About from "./Pages/About";
+import Error from "./Pages/Error";
+
 
 function App() {
-  return <>
-  <Sidemenu />
+ const router = createBrowserRouter([
+  {
+    path: "/",
+    element:<Home/>
+  },
+  {
+    path: "/about",
+    element:<About/>
+  },
+  {
+    path:"/*",
+    element:<Error/>
+  }
+  
+
+ ])
+ return <>
+ 
+<RouterProvider router={router}/>
+  
   </>;
 }
 
 export default App;
+

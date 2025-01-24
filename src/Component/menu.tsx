@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Button, Drawer } from 'antd';
-
+import React, { useState } from "react";
+import { Button, Drawer } from "antd";
+import { NavLink } from "react-router-dom";
+import { MenuOutlined } from "@ant-design/icons";
 const Sidemenu: React.FC = () => {
   const [open, setOpen] = useState(false);
 
@@ -14,12 +15,31 @@ const Sidemenu: React.FC = () => {
 
   return (
     <>
-      <Button type="primary" onClick={showDrawer}>
-        Open
+      <Button type="dashed" onClick={showDrawer}>
+        <MenuOutlined />
       </Button>
-      <Drawer title="Basic Drawer" onClose={onClose} open={open}>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+      <Drawer
+        title="Basic Drawer"
+        placement="left"
+        onClose={onClose}
+        open={open}
+      >
+        <NavLink
+          className={(e) => {
+            return e.isActive ? "red" : "";
+          }}
+          to="/"
+        >
+          <p>Home</p>
+        </NavLink>
+        <NavLink
+          to="/about"
+          className={(e) => {
+            return e.isActive ? "red" : "";
+          }}
+        >
+          <p>About</p>
+        </NavLink>
         <p>Some contents...</p>
       </Drawer>
     </>
