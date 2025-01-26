@@ -9,6 +9,7 @@ import Navbar from "./Component/Navbar";
 import Home from "./Pages/Home";
 import About from "./Pages/About";
 import Error from "./Pages/Error";
+import AddClasses from "./Pages/AddClasses";
 
 
 function App() {
@@ -24,6 +25,11 @@ function App() {
   {
     path:"/*",
     element:<Error/>
+  }
+  ,
+  {
+    path:"/addclasses",
+    element:<AddClasses/>
   }
   
 

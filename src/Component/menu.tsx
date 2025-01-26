@@ -40,6 +40,14 @@ const Sidemenu: React.FC = () => {
         >
           <p>About</p>
         </NavLink>
+        <NavLink
+          to="/addclasses"
+          className={(e) => {
+            return e.isActive ? "red" : "";
+          }}
+        >
+          <p>Add Classes</p>
+        </NavLink>
         <p>Some contents...</p>
       </Drawer>
     </>

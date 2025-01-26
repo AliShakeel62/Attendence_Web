@@ -1,9 +1,88 @@
-*{
+* {
   padding: 0%;
   margin: 0%;
   color: black;
 }
-.red{
+.red {
   background-color: black;
   color: white;
+}
+.inpdiv {
+  background-color: white;
+  height: 52vh;
+  font-family: Arial, Helvetica, sans-serif;
+  width: 35vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  margin-top: 2vh;
+}
+.add{
+  font-size: 5vh;
+  font-weight: 700;
+}
+.inp{
+border-radius:4px ;
+ background-color: whitesmoke;
+ border:1px solid ;
+ border-color: gray;
+ padding:2px;
+}
+.table-container {
+  margin: 20px;
+  padding: 10px;
+  border: 1px solid whitesmoke;
+  background-color: white;
+  border-radius: 12px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.basic-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.basic-table th,
+.basic-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.basic-table th {
+  background-color: #f4f4f4;
+  text-align: left;
+}
+
+
+@media (max-width: 576px) {
+  .inpdiv {
+    background-color: aqua;
+    font-size: 2.5vh;
+    height: 48vh;
+    width: 39vw;
+    margin-top: 2vh;
+  }
+  .add {
+    font-size: 4vh;
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 376px) {
+  .inpdiv {
+    background-color: bisque;
+    font-size: 2.5vh;
+    height: 48vh;
+    width: 39vw;
+    margin-top: 2vh;
+  }
+ .inp{
+  width: 40vw;
+ }
+  .add {
+    font-size: 4vh;
+    font-weight: 600;
+  }
 }
