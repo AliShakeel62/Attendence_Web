@@ -1,14 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../Component/Navbar";
 import "../App.css";
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, push, ref, set, onValue } from "firebase/database";
+import { initializeApp } from "firebase/app";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDXYgQqqyshW-JAjcr-3AeaaZyJxLotxJ4",
+  authDomain: "attendence-project-8822e.firebaseapp.com",
+  databaseURL: "https://attendence-project-8822e-default-rtdb.firebaseio.com",
+  projectId: "attendence-project-8822e",
+  storageBucket: "attendence-project-8822e.firebasestorage.app",
+  messagingSenderId: "606213843903",
+  appId: "1:606213843903:web:d37075966acfd147288f0a",
+  measurementId: "G-6W1C2GWWJ9",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 export default function AddClasses() {
-  const [name, setName] = React.useState("");
-  const [teacher, setTeacher] = React.useState("");
-  const [limit, setLimit] = React.useState("");
+  const [name, setName] = useState("");
+  const [teacher, setTeacher] = useState("");
+  const [limit, setLimit] = useState("");
+  const [datatable, setDatatable] = useState([]);
 
-  const val = (e:any) => {
+  const val = (e :any) => {
     const { name, value } = e.target;
     if (name === "className") setName(value);
     if (name === "classTeacher") setTeacher(value);
@@ -16,13 +32,15 @@ export default function AddClasses() {
   };
 
   const addClass = () => {
-    const db = getDatabase();
+    const db = getDatabase(app);
     const classDetails = {
       className: name,
       classTeacher: teacher,
       studentLimit: limit,
     };
-    set(ref(db, "class_detail/"), classDetails)
+    const classKey = push(ref(db, "class_detail")).key;
+
+    set(ref(db, `class_detail/${classKey}`), classDetails)
       .then(() => {
         console.log("Class added successfully:", classDetails);
       })
@@ -30,6 +48,21 @@ export default function AddClasses() {
         console.error("Error adding class:", error);
       });
   };
+
+  useEffect(() => {
+    const db = getDatabase(app);
+    const classRef = ref(db, "class_detail");
+
+    onValue(classRef, (snapshot) => {
+      const data = snapshot.val();
+      const classList = data ? Object.keys(data).map((key) => ({
+            id: key,
+            ...data[key],
+          }))
+        : [];
+      setDatatable(classList);
+    });
+  }, []);
 
   return (
     <>
@@ -50,7 +83,6 @@ export default function AddClasses() {
         >
           <div className="inpdiv">
             <p className="add">Add classes</p>
-
             <label htmlFor="className">Class Name</label>
             <input
               type="text"
@@ -93,11 +125,13 @@ export default function AddClasses() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>IX C</td>
-                  <td>Miss Najma</td>
-                  <td>30</td>
-                </tr>
+                {datatable.map((item :any, index : any) => (
+                  <tr key={index}>
+                    <td>{item.className}</td>
+                    <td>{item.classTeacher}</td>
+                    <td>{item.studentLimit}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
