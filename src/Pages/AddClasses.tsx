@@ -3,6 +3,7 @@ import Navbar from "../Component/Navbar";
 import "../App.css";
 import { getDatabase, push, ref, set, onValue } from "firebase/database";
 import { initializeApp } from "firebase/app";
+import Model from "../Component/Modal";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDXYgQqqyshW-JAjcr-3AeaaZyJxLotxJ4",
@@ -22,9 +23,11 @@ export default function AddClasses() {
   const [name, setName] = useState("");
   const [teacher, setTeacher] = useState("");
   const [limit, setLimit] = useState("");
-  const [datatable, setDatatable] = useState([]);
+  const [datatable, setDatatable] = useState<any>([]);
+  const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const val = (e :any) => {
+  const val = (e: any) => {
     const { name, value } = e.target;
     if (name === "className") setName(value);
     if (name === "classTeacher") setTeacher(value);
@@ -32,6 +35,7 @@ export default function AddClasses() {
   };
 
   const addClass = () => {
+    setIsSubmitting(true);
     const db = getDatabase(app);
     const classDetails = {
       className: name,
@@ -43,9 +47,15 @@ export default function AddClasses() {
     set(ref(db, `class_detail/${classKey}`), classDetails)
       .then(() => {
         console.log("Class added successfully:", classDetails);
+        setName("");
+        setTeacher("");
+        setLimit("");
       })
       .catch((error) => {
         console.error("Error adding class:", error);
+      })
+      .finally(() => {
+        setIsSubmitting(false);
       });
   };
 
@@ -53,14 +63,17 @@ export default function AddClasses() {
     const db = getDatabase(app);
     const classRef = ref(db, "class_detail");
 
-    onValue(classRef, (snapshot) => {
-      const data = snapshot.val();
-      const classList = data ? Object.keys(data).map((key) => ({
+    setLoading(true);
+    onValue(classRef, (res: any) => {
+      const data = res.val();
+      const classList = data
+        ? Object.keys(data).map((key) => ({
             id: key,
             ...data[key],
           }))
         : [];
       setDatatable(classList);
+      setLoading(false);
     });
   }, []);
 
@@ -87,6 +100,7 @@ export default function AddClasses() {
             <input
               type="text"
               onChange={val}
+              value={name}
               id="className"
               name="className"
               placeholder="Enter Class Name"
@@ -97,6 +111,7 @@ export default function AddClasses() {
             <input
               type="text"
               onChange={val}
+              value={teacher}
               id="classTeacher"
               name="classTeacher"
               placeholder="Enter Class Teacher"
@@ -107,36 +122,53 @@ export default function AddClasses() {
             <input
               type="text"
               onChange={val}
+              value={limit}
               id="studentLimit"
               name="studentLimit"
               placeholder="Enter Student Limit"
               className="inp"
             />
             <br />
-            <button onClick={addClass}>Submit</button>
+            <button
+              onClick={addClass}
+              className="btn"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </button>
           </div>
           <div className="table-container">
-            <table className="basic-table">
-              <thead>
-                <tr>
-                  <th>Class Name</th>
-                  <th>Class Teacher</th>
-                  <th>Student Limit</th>
-                </tr>
-              </thead>
-              <tbody>
-                {datatable.map((item :any, index : any) => (
-                  <tr key={index}>
-                    <td>{item.className}</td>
-                    <td>{item.classTeacher}</td>
-                    <td>{item.studentLimit}</td>
+            {loading ? (
+              <p>Loading data...</p>
+            ) : (
+              <table className="basic-table overflow-auto">
+                <thead>
+                  <tr>
+                    <th>Class Name</th>
+                    <th>Class Teacher</th>
+                    <th>Student Limit</th>
+                    <th>Edit</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {datatable.map((item: any, index: any) => (
+                    <tr key={index}>
+                      <td>{item.className}</td>
+                      <td>{item.classTeacher}</td>
+                      <td>{item.studentLimit}</td>
+                      <td>
+                       <Model />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </main>
+
+     
     </>
   );
 }
