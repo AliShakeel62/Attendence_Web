@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../Component/Navbar";
 import "../App.css";
-import { getDatabase, push, ref, set, onValue } from "firebase/database";
+import {
+  getDatabase,
+  push,
+  ref,
+  set,
+  onValue,
+  update,
+} from "firebase/database";
 import { initializeApp } from "firebase/app";
 import Model from "../Component/Modal";
+import { useSelector } from "react-redux";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDXYgQqqyshW-JAjcr-3AeaaZyJxLotxJ4",
@@ -15,8 +23,6 @@ const firebaseConfig = {
   appId: "1:606213843903:web:d37075966acfd147288f0a",
   measurementId: "G-6W1C2GWWJ9",
 };
-
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 export default function AddClasses() {
@@ -26,6 +32,7 @@ export default function AddClasses() {
   const [datatable, setDatatable] = useState<any>([]);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const Selector = useSelector((state: any) => state.modal);
 
   const val = (e: any) => {
     const { name, value } = e.target;
@@ -34,7 +41,7 @@ export default function AddClasses() {
     if (name === "studentLimit") setLimit(value);
   };
 
-  const addClass = () => {
+  const addOrUpdateClass = () => {
     setIsSubmitting(true);
     const db = getDatabase(app);
     const classDetails = {
@@ -42,60 +49,57 @@ export default function AddClasses() {
       classTeacher: teacher,
       studentLimit: limit,
     };
-    const classKey = push(ref(db, "class_detail")).key;
 
-    set(ref(db, `class_detail/${classKey}`), classDetails)
-      .then(() => {
-        console.log("Class added successfully:", classDetails);
-        setName("");
-        setTeacher("");
-        setLimit("");
-      })
-      .catch((error) => {
-        console.error("Error adding class:", error);
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
+    // Find an existing class by matching class name
+    const existingClass = datatable.find((cls: any) => cls.className === name);
+
+    if (existingClass) {
+      // Update existing class
+      update(ref(db, `class_detail/${existingClass.id}`), classDetails)
+        .then(() => console.log("Class updated successfully"))
+        .catch((error) => console.error("Error updating class:", error));
+    } else {
+      // Add new class
+      const classKey = push(ref(db, "class_detail")).key;
+      set(ref(db, `class_detail/${classKey}`), classDetails)
+        .then(() => console.log("Class added successfully"))
+        .catch((error) => console.error("Error adding class:", error));
+    }
+
+    setName("");
+    setTeacher("");
+    setLimit("");
+    setIsSubmitting(false);
   };
 
   useEffect(() => {
+    console.log(Selector);
     const db = getDatabase(app);
     const classRef = ref(db, "class_detail");
-
     setLoading(true);
-    onValue(classRef, (res: any) => {
+    onValue(classRef, (res) => {
       const data = res.val();
       const classList = data
-        ? Object.keys(data).map((key) => ({
-            id: key,
-            ...data[key],
-          }))
+        ? Object.keys(data).map((key) => ({ id: key, ...data[key] }))
         : [];
       setDatatable(classList);
       setLoading(false);
     });
-  }, []);
+  }, [Selector]);
 
   return (
     <>
       <Navbar />
       <main
         style={{
-          width: "100%",
+          width: "100vw",
           height: "90vh",
           backgroundColor: "whitesmoke",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <div className="con">
           <div className="inpdiv">
-            <p className="add">Add classes</p>
+            <p className="add">Add or Update Classes</p>
             <label htmlFor="className">Class Name</label>
             <input
               type="text"
@@ -130,7 +134,7 @@ export default function AddClasses() {
             />
             <br />
             <button
-              onClick={addClass}
+              onClick={addOrUpdateClass}
               className="btn"
               disabled={isSubmitting}
             >
@@ -157,7 +161,7 @@ export default function AddClasses() {
                       <td>{item.classTeacher}</td>
                       <td>{item.studentLimit}</td>
                       <td>
-                       <Model />
+                        <Model />
                       </td>
                     </tr>
                   ))}
@@ -167,8 +171,6 @@ export default function AddClasses() {
           </div>
         </div>
       </main>
-
-     
     </>
   );
 }

@@ -3,6 +3,11 @@
   margin: 0%;
   color: black;
 }
+.con{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .red {
   background-color: black;
   color: white;
@@ -64,7 +69,7 @@ border-radius:4px ;
 
 .btn{
 border-radius: 12px;
-padding: 6px;
+padding: 2vh;
 border: 0px solid;
 transition: 1s;
 }
@@ -73,8 +78,13 @@ transition: 1s;
   color: white;
 }
 @media (max-width: 576px) {
+  .con{
+    display: flex;
+    flex-direction: column;
+    
+  }
   .inpdiv {
-    background-color: aqua;
+    background-color: white;
     font-size: 2.5vh;
     height: 48vh;
     width: 39vw;
@@ -84,15 +94,41 @@ transition: 1s;
     font-size: 4vh;
     font-weight: 600;
   }
+  .basic-table{
+    width: 100%;
+    height: 20vh;
+  }
+  .table-container{
+    width: 83%;
+    height: 100%;
+  }
+  .basic-table{
+    width: 90%;
+  }
 }
 
 @media (max-width: 376px) {
+  .con{
+    display: flex;
+    flex-direction: column;
+  }
+  .basic-table{
+    width: 100%;
+    height: 20vh;
+  }
+  .table-container{
+    width: 83%;
+    height: 100%;
+  }
+  .basic-table{
+    width: 90%;
+  }
   .inpdiv {
-    background-color: bisque;
+    background-color: white;
     font-size: 2.5vh;
     height: 48vh;
-    width: 39vw;
-    margin-top: 2vh;
+    width: 69vw;
+    margin-top: 3vh;
   }
  .inp{
   width: 40vw;
