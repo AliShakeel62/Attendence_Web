@@ -26,54 +26,71 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export default function AddClasses() {
-  const [name, setName] = useState("");
-  const [teacher, setTeacher] = useState("");
-  const [limit, setLimit] = useState("");
   const [datatable, setDatatable] = useState<any>([]);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [SelectedID, setSelectedID] = useState(null);
+
+  // Redux state
   const Selector = useSelector((state: any) => state.modal);
 
+  // Form state
+  const [formData, setFormData] = useState({
+    className: "",
+    classTeacher: "",
+    studentLimit: "",
+  });
+
+  // Update formData when Redux state changes
+  useEffect(() => {
+    setFormData({
+      className: Selector.Class || "",
+      classTeacher: Selector.Teacher || "",
+      studentLimit: Selector.limit || "",
+    });
+  }, [Selector]);
+
+  // Handle input changes
   const val = (e: any) => {
     const { name, value } = e.target;
-    if (name === "className") setName(value);
-    if (name === "classTeacher") setTeacher(value);
-    if (name === "studentLimit") setLimit(value);
+    setFormData({ ...formData, [name]: value });
   };
 
+  // Handle class ID selection
+  const handelID = (item: any) => {
+    setSelectedID(item.id);
+  };
+
+  // Add or update class
   const addOrUpdateClass = () => {
     setIsSubmitting(true);
     const db = getDatabase(app);
-    const classDetails = {
-      className: name,
-      classTeacher: teacher,
-      studentLimit: limit,
-    };
 
-    // Find an existing class by matching class name
-    const existingClass = datatable.find((cls: any) => cls.className === name);
-
-    if (existingClass) {
+    if (SelectedID) {
       // Update existing class
-      update(ref(db, `class_detail/${existingClass.id}`), classDetails)
+      update(ref(db, `class_detail/${SelectedID}`), formData)
         .then(() => console.log("Class updated successfully"))
         .catch((error) => console.error("Error updating class:", error));
     } else {
       // Add new class
       const classKey = push(ref(db, "class_detail")).key;
-      set(ref(db, `class_detail/${classKey}`), classDetails)
+      set(ref(db, `class_detail/${classKey}`), formData)
         .then(() => console.log("Class added successfully"))
         .catch((error) => console.error("Error adding class:", error));
     }
 
-    setName("");
-    setTeacher("");
-    setLimit("");
+    // Reset form and state
+    setFormData({
+      className: "",
+      classTeacher: "",
+      studentLimit: "",
+    });
+    setSelectedID(null);
     setIsSubmitting(false);
   };
 
+  // Fetch data from Firebase
   useEffect(() => {
-    console.log(Selector);
     const db = getDatabase(app);
     const classRef = ref(db, "class_detail");
     setLoading(true);
@@ -104,7 +121,7 @@ export default function AddClasses() {
             <input
               type="text"
               onChange={val}
-              value={name}
+              value={formData.className} // Bind to formData
               id="className"
               name="className"
               placeholder="Enter Class Name"
@@ -115,7 +132,7 @@ export default function AddClasses() {
             <input
               type="text"
               onChange={val}
-              value={teacher}
+              value={formData.classTeacher} // Bind to formData
               id="classTeacher"
               name="classTeacher"
               placeholder="Enter Class Teacher"
@@ -126,7 +143,7 @@ export default function AddClasses() {
             <input
               type="text"
               onChange={val}
-              value={limit}
+              value={formData.studentLimit} // Bind to formData
               id="studentLimit"
               name="studentLimit"
               placeholder="Enter Student Limit"
@@ -152,6 +169,7 @@ export default function AddClasses() {
                     <th>Class Teacher</th>
                     <th>Student Limit</th>
                     <th>Edit</th>
+                    <th>id</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -161,8 +179,9 @@ export default function AddClasses() {
                       <td>{item.classTeacher}</td>
                       <td>{item.studentLimit}</td>
                       <td>
-                        <Model />
+                        <Model onupdate={addOrUpdateClass} onedit={() => handelID(item)} />
                       </td>
+                      <td>{item.id}</td>
                     </tr>
                   ))}
                 </tbody>
