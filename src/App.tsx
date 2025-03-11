@@ -7,9 +7,11 @@ import {createBrowserRouter , RouterProvider} from "react-router-dom"
 import "./App.css";
 import Navbar from "./Component/Navbar";
 import Home from "./Pages/Home";
-import About from "./Pages/About";
+import About from "./Pages/AddStudent";
 import Error from "./Pages/Error";
 import AddClasses from "./Pages/AddClasses";
+import Teacher from "./Pages/Teacher";
+import AddStudent from "./Pages/AddStudent";
 
 
 function App() {
@@ -19,8 +21,8 @@ function App() {
     element:<Home/>
   },
   {
-    path: "/about",
-    element:<About/>
+    path: "/addstudent",
+    element:<AddStudent/>
   },
   {
     path:"/*",
@@ -30,6 +32,10 @@ function App() {
   {
     path:"/addclasses",
     element:<AddClasses/>
+  },
+  {
+    path:"/teacher",
+    element:<Teacher/>
   }
   
 

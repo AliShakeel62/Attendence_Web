@@ -14,6 +14,8 @@ import { initializeApp } from "firebase/app";
 import Model from "../Component/Modal";
 import { useSelector } from "react-redux";
 import app from "../Firebase/FirebaseConfig";
+import DeleteModal from "../Component/Deletemodal";
+
 
 export default function AddClasses() {
   const [datatable, setDatatable] = useState<any>([]);
@@ -23,7 +25,7 @@ export default function AddClasses() {
   const [Class, setclass] = useState("");
   const [Teacher, setteacher] = useState("");
   const [limit, setlimit] = useState("");
-
+  
   const [formData, setFormData] = useState({
     className: "",
     classTeacher: "",
@@ -78,12 +80,7 @@ export default function AddClasses() {
     setIsSubmitting(false);
   };
 
-  const DeleteClasses = (id: any) => {
-    const db = getDatabase(app);
-    remove(ref(db, `class_detail/${id}`))
-      .then(() => console.log("Class deleted successfully"))
-      .catch((error) => console.error("Error deleting class:", error));
-  };
+ 
 
   return (
     <>
@@ -163,20 +160,7 @@ export default function AddClasses() {
                         <Model onedit={item.id} />
                       </td>
                       <td>
-                        <button
-                          className="btn"
-                          onClick={() => {
-                            if (
-                              window.confirm(
-                                "Are you sure you want to delete this class?"
-                              )
-                            ) {
-                              DeleteClasses(item.id);
-                            }
-                          }}
-                        >
-                          Delete
-                        </button>
+                       <DeleteModal Deleteid={item.id} />
                       </td>
                     </tr>
                   ))}

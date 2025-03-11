@@ -1,0 +1,123 @@
+.pageWrapper {
+    background-color:whitesmoke;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    height: 100%;
+    min-height: 86vh;
+    padding: 10px;
+}
+
+.container {
+    background-color: white;
+    padding: 10px; 
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 90%; 
+    font-family: Arial, Helvetica, sans-serif;
+    align-content: center;
+}
+
+.heading {
+    text-align: center;
+    margin-bottom: 8px;
+    font-size: 20px; 
+    color: #333;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 5px;
+    font-size: 14px; /* Reduced font size */
+}
+
+.input, .fileInput {
+    width: 80%; /* Keep it full width */
+    padding: 5px; /* Reduced padding */
+    margin-top: 3px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: whitesmoke;
+    height: 20px; /* Reduced height */
+    font-size: 14px; /* Smaller text */
+}
+
+.flexRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px; /* Smaller gap */
+}
+
+.button {
+    width: 100%;
+    padding: 7px; /* Smaller padding */
+    font-size: 14px; /* Smaller font */
+    background-color: whitesmoke;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 8px; /* Reduced margin */
+    transition: 0.5s;
+}
+
+.button:hover {
+    background: black;
+    color: white;
+}
+
+/* Reduce table container height */
+.table_container {
+    margin: 10px; /* Smaller margin */
+    padding: 8px; /* Reduced padding */
+    border: 1px solid whitesmoke;
+    background-color: white;
+    border-radius: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 50vh; /* Reduced height */
+    width: 45vw;
+    overflow-y: auto;
+}
+
+.basic_table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.basic_table th, .basic_table td {
+    border: 1px solid #ddd;
+    padding: 6px; /* Reduced padding */
+    text-align: center;
+}
+
+.basic_table th {
+    background-color: #f4f4f4;
+    text-align: center;
+    border-radius: 3px;
+}
+/* Responsive adjustments */
+@media (max-width: 500px) {
+    .pageWrapper {
+       flex-direction: column;
+    }
+    
+    .container {
+        max-width: 350px; /* Even smaller on small screens */
+    }
+    .input, .fileInput {
+        height: 28px; /* Reduce height */
+        font-size: 12px; /* Smaller font */
+    }
+    .button {
+        font-size: 12px; /* Smaller button text */
+        padding: 6px;
+    }
+    .table_container {
+        height: 45vh; /* Even smaller for mobile */
+        width: 100%;
+        max-width: 90%;
+    }
+}

@@ -1,0 +1,6 @@
+.active-link p {
+    border-bottom: 2px solid black; /* Black underline */
+    display: inline-block; /* Ensures underline fits text width */
+    background: #000;
+  }
+  
