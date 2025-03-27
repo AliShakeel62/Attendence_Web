@@ -12,6 +12,7 @@ import Error from "./Pages/Error";
 import AddClasses from "./Pages/AddClasses";
 import Teacher from "./Pages/Teacher";
 import AddStudent from "./Pages/AddStudent";
+import Attendence from "./Pages/Attendence";
 
 
 function App() {
@@ -37,7 +38,10 @@ function App() {
     path:"/teacher",
     element:<Teacher/>
   }
-  
+  , {
+    path:"/attendence",
+    element:<Attendence/>
+  }
 
  ])
  return <>

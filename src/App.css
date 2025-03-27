@@ -114,6 +114,7 @@ border-radius: 12px;
 padding: 2vh;
 border: 0px solid;
 transition: 1s;
+margin-top: 12px;
 }
 .btn:hover{
  background-color: black;

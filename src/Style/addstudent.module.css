@@ -1,0 +1,182 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: whitesmoke;
+  margin: 0;
+  padding: 0;
+}
+
+.con {
+  display: flex;
+  align-items: center;
+padding-top: 10px;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+.inpdiv {
+  background-color: white;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 350px; /* Reduced width */
+  width: 90%;
+  font-family: Arial, Helvetica, sans-serif;
+  align-content: center;
+  height: 70vh; /* Reduced height */
+}
+
+.add {
+  font-size: 18px; /* Slightly smaller font */
+  font-weight: bold;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.inp {
+  width: 100%; /* Full width for better alignment */
+  padding: 5px;
+  margin-top: 3px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: whitesmoke;
+  height: 12px; /* Reduced height */
+  font-size: 13px; /* Smaller text */
+}
+
+.inlineInputs {
+  display: flex;
+  gap: 10px; /* Adjust spacing between inputs */
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.inlineInputs div {
+  flex: 1; /* Each input takes equal space */
+}
+
+
+.inps {
+  width: 90%; /* Slightly wider */
+  padding: 5px;
+  margin-top: 3px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: whitesmoke;
+  height: 10px;
+  font-size: 13px;
+}
+
+.selectinp {
+  width: 90%; /* Slightly wider */
+  padding: 5px;
+  margin-top: 3px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: whitesmoke;
+  height: 25px;
+  font-size: 13px;
+}
+
+.btn {
+  width: 100%;
+  padding: 6px;
+  font-size: 13px;
+  background-color: whitesmoke;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: 0.5s;
+}
+
+.btn:hover {
+  background: black;
+  color: white;
+}
+
+/* Table Container */
+.tableContainer {
+  margin: 5px;
+  padding: 6px;
+  border: 1px solid whitesmoke;
+  background-color: white;
+  border-radius: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  height: 55vh; /* Slightly increased */
+  width: 50vw; /* More width */
+  overflow-y: auto;
+}
+
+.basicTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.basicTable th,
+.basicTable td {
+  padding: 6px;
+  text-align: center;
+}
+
+.basicTable th {
+  background-color: #f4f4f4;
+  border-radius: 3px;
+}
+
+/* Responsive Design */
+@media (max-width: 500px) {
+  .con {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .inpdiv {
+    max-width: 280px; /* Even smaller form */
+    height: 72vh; /* Smaller height */
+    padding: 8px;
+    margin-bottom: 6vh;
+  }
+
+  .inp,
+  .inps {
+    height: 10px;
+    font-size: 12px;
+  }
+.inps{
+  width: 60%;
+}
+.inp{
+  width: 80%;
+}
+
+  .btn {
+    padding: 5px;
+    font-size: 12px;
+  }
+
+  .tableContainer {
+    max-width: 90vw;
+    width: 100%; /* Full width */
+    height: 60vh; /* More height for visibility */
+    margin-left: 2vw;
+  }
+
+  .basicTable th,
+  .basicTable td {
+    font-size: 12px;
+    padding: 4px; /* Reduced padding */
+  }
+  .selectinp {
+    width: 90%; /* Slightly wider */
+    padding: 5px;
+    margin-top: 3px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: whitesmoke;
+    height: 23x;
+    font-size: 13px;
+  }
+  
+}

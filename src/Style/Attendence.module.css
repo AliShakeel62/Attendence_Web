@@ -1,0 +1,53 @@
+.inpdiv {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.inpdivs:hover{
+  background-color: black;
+  color: white;
+}
+.inp {
+  width: 20vw;
+  padding: 5px;
+  margin-top: 3px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 13px;
+}
+
+.btn {
+  width: 20vw;
+  padding: 6px;
+  font-size: 13px;
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: 0.5s;
+}
+
+.btn:hover {
+  background: black;
+  color: white;
+}
+
+@media (max-width: 500px) {
+  .inpdiv {
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .inp {
+    width: 45%;
+  }
+
+  .btn {
+    width: 35%;
+    margin-top: 12px;
+  }
+}

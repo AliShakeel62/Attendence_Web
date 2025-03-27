@@ -15,6 +15,13 @@ const DeleteModal = ({Deleteid}:{Deleteid: any}) => {
       .then(() => console.log("Class deleted successfully"))
       .catch((error) => console.error("Error deleting class:", error));
   };
+
+  const DeleteStudent = (id: number) => {
+    const db = getDatabase(app);
+    remove(ref(db, `student_detail/${id}`))
+      .then(() => console.log("Class deleted successfully"))
+      .catch((error) => console.error("Error deleting class:", error));
+  };
   const [open, setOpen] = useState(false);
 
   const showModal = () => {
@@ -25,6 +32,7 @@ const DeleteModal = ({Deleteid}:{Deleteid: any}) => {
     DeleteClasses(Deleteid);
     setOpen(false);
     DeleteTeacher(Deleteid)
+    DeleteStudent(Deleteid)
   };
 
   const handleCancel = () => {

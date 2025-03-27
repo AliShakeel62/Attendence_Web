@@ -4,6 +4,7 @@ import "../App.css";
 import { getDatabase, push, ref, set, onValue } from "firebase/database";
 import app from "../Firebase/FirebaseConfig";
 import DeleteModal from "../Component/Deletemodal";
+import Style from "../Style/addstudent.module.css";
 
 export default function AddStudent() {
   const [datatable, setDatatable] = useState<any>([]);
@@ -17,7 +18,7 @@ export default function AddStudent() {
     fatherContact: "",
     studentId: "",
     studentClass: "",
-    address: "",
+    attendence: "",
     picture: "",
   });
 
@@ -40,14 +41,15 @@ export default function AddStudent() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const addOrUpdateStudent = () => {
+  const addOrUpdateStudent = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Prevent page reload on form submission
     setIsSubmitting(true);
     const db = getDatabase(app);
     const studentKey = push(ref(db, "student_detail")).key;
     set(ref(db, `student_detail/${studentKey}`), formData)
       .then(() => console.log("Student added successfully"))
       .catch((error) => console.error("Error adding student:", error));
-    
+
     setFormData({
       firstName: "",
       lastName: "",
@@ -55,7 +57,7 @@ export default function AddStudent() {
       fatherContact: "",
       studentId: "",
       studentClass: "",
-      address: "",
+      attendence: "",
       picture: "",
     });
     setIsSubmitting(false);
@@ -64,41 +66,144 @@ export default function AddStudent() {
   return (
     <>
       <Navbar />
-      <main style={{ width: "100vw", height: "90vh", backgroundColor: "whitesmoke" }}>
-        <div className="con">
-          <div className="inpdiv">
-            <p className="add">Add or Update Student</p>
-            <div className="inline-inputs">
-              <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="First Name" className="inp" />
-              <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Last Name" className="inp" />
+      <main className={Style.main}>
+        <div className={Style.con}>
+          <form className={Style.inpdiv} onSubmit={addOrUpdateStudent}>
+            <p className={Style.add}>Add or Update Student</p>
+
+            <div className={Style.inlineInputs}>
+              <div>
+                <label className={Style.label}>First Name</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  placeholder="First Name"
+                  className={Style.inps}
+                  required
+                />
+              </div>
+              <div>
+                <label className={Style.label}>Last Name</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  placeholder="Last Name"
+                  className={Style.inps}
+                  required
+                />
+              </div>
             </div>
-            <input type="text" name="fatherName" value={formData.fatherName} onChange={handleChange} placeholder="Father Name" className="inp" />
-            <input type="text" name="fatherContact" value={formData.fatherContact} onChange={handleChange} placeholder="Father Contact" className="inp" />
-            <div className="inline-inputs">
-              <input type="text" name="studentId" value={formData.studentId} onChange={handleChange} placeholder="Student ID" className="inp" />
-              <input type="text" name="studentClass" value={formData.studentClass} onChange={handleChange} placeholder="Class" className="inp" />
+
+            <div>
+              <label className={Style.label}>Father Name</label>
+              <input
+                type="text"
+                name="fatherName"
+                value={formData.fatherName}
+                onChange={handleChange}
+                placeholder="Father Name"
+                className={Style.inp}
+                required
+              />
             </div>
-            <input type="text" name="address" value={formData.address} onChange={handleChange} placeholder="Address" className="inp" />
-            <input type="text" name="picture" value={formData.picture} onChange={handleChange} placeholder="Picture URL" className="inp" />
-            <button onClick={addOrUpdateStudent} className="btn" disabled={isSubmitting}>
+
+            <div>
+              <label className={Style.label}>Father Contact</label>
+              <input
+                type="text"
+                name="fatherContact"
+                value={formData.fatherContact}
+                onChange={handleChange}
+                placeholder="Father Contact"
+                className={Style.inp}
+                required
+              />
+            </div>
+
+            <div className={Style.inlineInputs}>
+              <div>
+                <label className={Style.label}>Student ID</label>
+                <input
+                  type="text"
+                  name="studentId"
+                  value={formData.studentId}
+                  onChange={handleChange}
+                  placeholder="Student ID"
+                  className={Style.inps}
+                  required
+                />
+              </div>
+              <div>
+                <label className={Style.label}>Class</label>
+                <select
+                  name="studentClass"
+                  value={formData.studentClass}
+                  onChange={(e) =>
+                    setFormData({ ...formData, studentClass: e.target.value })
+                  }
+                  className={Style.selectinp}
+                  required
+                >
+                  <option value="">Select Class</option>
+                  <option value="Class I">Class I</option>
+                  <option value="Class II">Class II</option>
+                  <option value="Class III">Class III</option>
+                  <option value="Class IV">Class IV</option>
+                  <option value="Class V">Class V</option>
+                  <option value="Class VI">Class VI</option>
+                  <option value="Class VII">Class VII</option>
+                  <option value="Class VIII">Class VIII</option>
+                  <option value="Class IX">Class IX</option>
+                  <option value="Class X">Class X</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className={Style.label}>Address</label>
+              <input
+                type="text"
+                name="attendence"
+                value={formData.attendence}
+                onChange={handleChange}
+                placeholder="Address"
+                className={Style.inp}
+                required
+              />
+            </div>
+
+            <div>
+              <label className={Style.label}>Picture</label>
+              <input
+                type="file"
+                name="picture"
+                value={formData.picture}
+                onChange={handleChange}
+                className={Style.inp}
+                required
+              />
+            </div>
+
+            <button type="submit" className={Style.btn} disabled={isSubmitting}>
               {isSubmitting ? "Submitting..." : "Submit"}
             </button>
-          </div>
-          <div className="table-container">
+          </form>
+
+          <div className={Style.tableContainer}>
             {loading ? (
               <p>Loading data...</p>
             ) : (
-              <table className="basic-table overflow-auto">
+              <table className={Style.basicTable}>
                 <thead>
                   <tr>
-                    <th>First Name</th>
-                    <th>Last Name</th>
+                    <th>Student Name</th>
                     <th>Father Name</th>
-                    <th>Father Contact</th>
                     <th>Student ID</th>
-                    <th>Class</th>
                     <th>Address</th>
-                    <th>Picture</th>
                     <th>Delete</th>
                   </tr>
                 </thead>
@@ -106,14 +211,12 @@ export default function AddStudent() {
                   {datatable.map((item: any, index: any) => (
                     <tr key={index}>
                       <td>{item.firstName}</td>
-                      <td>{item.lastName}</td>
                       <td>{item.fatherName}</td>
-                      <td>{item.fatherContact}</td>
                       <td>{item.studentId}</td>
-                      <td>{item.studentClass}</td>
-                      <td>{item.address}</td>
-                      <td><img src={item.picture} alt="Student" width="50" /></td>
-                      <td><DeleteModal Deleteid={item.id} /></td>
+                      <td>{item.attendence}</td>
+                      <td>
+                        <DeleteModal Deleteid={item.id} />
+                      </td>
                     </tr>
                   ))}
                 </tbody>

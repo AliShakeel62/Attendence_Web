@@ -69,6 +69,18 @@ const Sidemenu: React.FC = () => {
           >
             Teacher
           </NavLink>
+          <NavLink
+            to="/attendence"
+            style={({ isActive }) => ({
+              backgroundColor: isActive ? "black" : "transparent",
+              color: isActive ? "white" : "black",
+              padding: "10px",
+              textDecoration: "none",
+              display: "block",
+            })}
+          >
+            Attendence
+          </NavLink>
         </div>
       </Drawer>
     </>

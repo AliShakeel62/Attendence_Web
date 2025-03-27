@@ -1,36 +1,21 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../Component/Navbar";
 import "../App.css";
-import {
-  getDatabase,
-  push,
-  ref,
-  set,
-  onValue,
-  update,
-  remove,
-} from "firebase/database";
-import { initializeApp } from "firebase/app";
-import Model from "../Component/Modal";
-import { useSelector } from "react-redux";
+import { getDatabase, push, ref, set, onValue } from "firebase/database";
 import app from "../Firebase/FirebaseConfig";
+import Model from "../Component/Modal";
 import DeleteModal from "../Component/Deletemodal";
-
 
 export default function AddClasses() {
   const [datatable, setDatatable] = useState<any>([]);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [SelectedID, setSelectedID] = useState(null);
-  const [Class, setclass] = useState("");
-  const [Teacher, setteacher] = useState("");
-  const [limit, setlimit] = useState("");
-  
   const [formData, setFormData] = useState({
-    className: "",
+    className: "Class 1", // Default value
     classTeacher: "",
     studentLimit: "",
   });
+
   useEffect(() => {
     const db = getDatabase(app);
     const classRef = ref(db, "class_detail");
@@ -45,26 +30,13 @@ export default function AddClasses() {
     });
   }, []);
 
-  console.log(datatable);
-  useEffect(() => {
-    setFormData({
-      className: Class,
-      classTeacher: Teacher,
-      studentLimit: limit,
-    });
-  }, [Class, Teacher, limit]);
-
-  const val = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const val = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-
     setFormData({ ...formData, [name]: value });
-
-    if (name === "className") setclass(value);
-    if (name === "classTeacher") setteacher(value);
-    if (name === "studentLimit") setlimit(value);
   };
 
-  const addOrUpdateClass = () => {
+  const addOrUpdateClass = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Stop form reload
     setIsSubmitting(true);
     const db = getDatabase(app);
     const classKey = push(ref(db, "class_detail")).key;
@@ -73,14 +45,12 @@ export default function AddClasses() {
       .catch((error) => console.error("Error adding class:", error));
 
     setFormData({
-      className: "",
+      className: "Class 1",
       classTeacher: "",
       studentLimit: "",
     });
     setIsSubmitting(false);
   };
-
- 
 
   return (
     <>
@@ -95,47 +65,61 @@ export default function AddClasses() {
         <div className="con">
           <div className="inpdiv">
             <p className="add">Add or Update Classes</p>
-            <label htmlFor="className">Class Name</label>
-            <input
-              type="text"
-              onChange={val}
-              value={formData.className}
-              id="className"
-              name="className"
-              placeholder="Enter Class Name"
-              className="inp"
-            />
-            <br />
-            <label htmlFor="classTeacher">Class Teacher</label>
-            <input
-              type="text"
-              onChange={val}
-              value={formData.classTeacher}
-              id="classTeacher"
-              name="classTeacher"
-              placeholder="Enter Class Teacher"
-              className="inp"
-            />
-            <br />
-            <label htmlFor="studentLimit">Student Limit</label>
-            <input
-              type="text"
-              onChange={val}
-              value={formData.studentLimit}
-              id="studentLimit"
-              name="studentLimit"
-              placeholder="Enter Student Limit"
-              className="inp"
-            />
-            <br />
-            <button
-              onClick={addOrUpdateClass}
-              className="btn"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Submitting..." : "Submit"}
-            </button>
+
+            <form onSubmit={addOrUpdateClass}>
+              <label htmlFor="className">Class Name</label>
+              <select
+                name="className"
+                value={formData.className}
+                onChange={val}
+                className="inp"
+                required
+              >
+                <option value="Class I">Class I</option>
+                <option value="Class II">Class II</option>
+                <option value="Class III">Class III</option>
+                <option value="Class IV">Class IV</option>
+                <option value="Class V">Class V</option>
+                <option value="Class VI">Class VI</option>
+                <option value="Class VII">Class VII</option>
+                <option value="Class VIII">Class VIII</option>
+                <option value="Class IX">Class IX</option>
+                <option value="Class X">Class X</option>
+              </select>
+              <br />
+
+              <label htmlFor="classTeacher">Class Teacher</label>
+              <input
+                type="text"
+                onChange={val}
+                value={formData.classTeacher}
+                id="classTeacher"
+                name="classTeacher"
+                placeholder="Enter Class Teacher"
+                className="inp"
+                required
+              />
+              <br />
+
+              <label htmlFor="studentLimit">Student Limit</label>
+              <input
+                type="text"
+                onChange={val}
+                value={formData.studentLimit}
+                id="studentLimit"
+                name="studentLimit"
+                placeholder="Enter Student Limit"
+                className="inp"
+                required
+              />
+              <br />
+
+              <button type="submit" className="btn" disabled={isSubmitting}>
+                {isSubmitting ? "Submitting..." : "Submit"}
+              </button>
+            </form>
           </div>
+
           <div className="table-container">
             {loading ? (
               <p>Loading data...</p>
@@ -160,7 +144,7 @@ export default function AddClasses() {
                         <Model onedit={item.id} />
                       </td>
                       <td>
-                       <DeleteModal Deleteid={item.id} />
+                        <DeleteModal Deleteid={item.id} />
                       </td>
                     </tr>
                   ))}
