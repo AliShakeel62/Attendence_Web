@@ -1,9 +1,9 @@
 import Navbar from "../Component/Navbar";
 import Style from "../Style/Attendence.module.css";
 import "../../node_modules/bootstrap/dist/css/bootstrap-grid.min.css";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, getFirestore } from "firebase/firestore";
 import app from "../Firebase/FirebaseConfig"; // path depends on where your firebase.js is
-
+import { getDatabase, ref, child, get } from "firebase/database";
 import { useState } from "react";
 
 
@@ -11,7 +11,7 @@ export default function Attendence() {
   const [showClass, setShowClass] = useState(false);
   const [showType, setShowType] = useState(false);
   const [showDate, setShowDate] = useState(false);
-  
+
 
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedType, setSelectedType] = useState("");
@@ -23,41 +23,37 @@ export default function Attendence() {
     rollNo: string;
   };
 
+  const db = getFirestore(app)
   const [resultData, setResultData] = useState<any>([]);
   const [loading, setLoading] = useState(false);
-  const fetchAttendanceData = async (
-    selectedClass: string,
-    selectedType: string
-  ) => {
-    try {
-      console.log(
-        "Selected Class:",
-        selectedClass,
-        "Selected Type:",
-        selectedType
-      );
-      const q = query(
-        collection(app , "student_detail"),
-        where("studentClass", "==", selectedClass),
-        where("attendanceType", "==", selectedType)
-      );
 
-      const querySnapshot = await getDocs(q);
-      const dataArr: any[] = [];
 
-      querySnapshot.forEach((doc) => {
-        dataArr.push({
-          id: doc.id,
-          ...doc.data(),
-        });
-      });
+ const fetchAttendanceData = async (selectedClass: string, selectedType: string) => {
+  try {
+    const db = getDatabase();
+    const snapshot = await get(ref(db, `${selectedType}/${selectedClass}`));
 
-      console.log(`Fetched Data:`, dataArr);
-    } catch (error) {
-      console.error("Error fetching data:", error);
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      console.log(data)
+      const filteredData = Object.entries(data)
+        .filter(([key, value]: any) => 
+          value.studentClass === selectedClass &&
+          value.type === selectedType.toLowerCase()
+        )
+        .map(([id, value]: any) => ({
+          id,
+          ...value,
+        }));
+
+      console.log("Filtered Data:", filteredData);
+    } else {
+      console.log("No data available");
     }
-  };
-
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
   return (
     <>
       <Navbar />

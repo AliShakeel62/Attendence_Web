@@ -20,7 +20,7 @@ const Teacher = () => {
 
   function writeUserData(formData: any) {
     const db = getDatabase(app);
-    const formid = push(ref(db, `teacher_info`)).key;
+    const formid = push(ref(db, `teacher_detail`)).key;
     set(ref(db, `teacher_info/${formid}`), formData);
   }
 

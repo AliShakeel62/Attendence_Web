@@ -45,8 +45,8 @@ export default function AddStudent() {
     e.preventDefault(); // Prevent page reload on form submission
     setIsSubmitting(true);
     const db = getDatabase(app);
-    const studentKey = push(ref(db, "student_detail")).key;
-    set(ref(db, `student_detail/${studentKey}`), formData)
+  //  const studentKey = push(ref(db, `student_detail/`)).key;
+    set(ref(db, `student_detail/${formData.studentClass}`), formData)
       .then(() => console.log("Student added successfully"))
       .catch((error) => console.error("Error adding student:", error));
 
