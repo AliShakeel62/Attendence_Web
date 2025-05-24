@@ -1,13 +1,15 @@
 import Navbar from "../Component/Navbar";
 import Style from "../Style/teacher.module.css";
 import { useEffect, useState } from "react";
-import { getDatabase, onValue, push, ref, set } from "firebase/database";
+import { getDatabase, onValue, push, ref, set, remove } from "firebase/database";
 import app from "../Firebase/FirebaseConfig";
 import DeleteModal from "../Component/Deletemodal";
+
 const Teacher = () => {
   const [teachertabel, settable] = useState<any>();
-  const [loading,setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
+    teacherId: "",
     teacherName: "",
     subject: "",
     email: "",
@@ -18,17 +20,54 @@ const Teacher = () => {
     file: null,
   });
 
+  // Static subjects list
+  const subjectList = [
+    "Math",
+    "Urdu",
+    "Islamiat",
+    "English",
+    "Computer",
+    "Sindhi",
+    "Physics",
+    "Chemistry",
+    "Pak Study",
+    "Biology",
+    "Commerce",
+  ];
+
   function writeUserData(formData: any) {
     const db = getDatabase(app);
-    const formid = push(ref(db, `teacher_detail`)).key;
-    set(ref(db, `teacher_info/${formid}`), formData);
+    const subject = formData.subject?.toLowerCase() || "general";
+    const newKey = push(ref(db)).key;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const pictureURL = reader.result;
+      const dataToSave = {
+        ...formData,
+        file: pictureURL,
+      };
+
+      set(ref(db, `teacher_info/${subject}/${newKey}`), {
+        data: dataToSave,
+      });
+    };
+    if (formData.file) {
+      reader.readAsDataURL(formData.file);
+    }
   }
 
   const handleChange = (e: any) => {
     const { name, value, type, files } = e.target;
+    let newValue = type === "file" ? files[0] : value;
+
+    if (name === "subject" && typeof newValue === "string") {
+      newValue = newValue.toLowerCase();
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "file" ? files[0] : value,
+      [name]: newValue,
     }));
   };
 
@@ -36,6 +75,7 @@ const Teacher = () => {
     e.preventDefault();
 
     if (
+      !formData.teacherId ||
       !formData.teacherName ||
       !formData.email ||
       !formData.contact ||
@@ -50,6 +90,7 @@ const Teacher = () => {
 
     writeUserData(formData);
     setFormData({
+      teacherId: "",
       teacherName: "",
       subject: "",
       email: "",
@@ -63,19 +104,29 @@ const Teacher = () => {
 
   useEffect(() => {
     const db = getDatabase(app);
-    const teacherref = ref(db, `teacher_info`);
-    onValue(teacherref, (res) => {
-      const data = res.val();
-      const teacherlist = data
-        ? Object.keys(data).map((key) => ({ id: key, ...data[key] }))
-        : [];
-        settable(teacherlist)
-        setLoading(false)
-        console.log(teacherlist)
+    const teacherRef = ref(db, `teacher_info/`);
+    onValue(teacherRef, (snapshot) => {
+      const data = snapshot.val();
+      const allTeachers: any[] = [];
+
+      if (data) {
+        Object.entries(data).forEach(([subject, teachers]: any) => {
+          Object.entries(teachers).forEach(([id, value]: any) => {
+            if (value?.data) {
+              allTeachers.push({
+                id,
+                subject,
+                ...value.data,
+              });
+            }
+          });
+        });
+      }
+
+      settable(allTeachers);
+      setLoading(false);
     });
-   
-  
-}, []);
+  }, []);
 
   return (
     <>
@@ -84,6 +135,17 @@ const Teacher = () => {
         <div className={Style.container}>
           <h1 className={Style.heading}>Add Teacher</h1>
           <form onSubmit={handleSubmit}>
+            <label>Teacher ID</label>
+            <input
+              type="text"
+              value={formData.teacherId}
+              name="teacherId"
+              placeholder="Enter Teacher ID"
+              onChange={handleChange}
+              className={Style.input}
+              required
+            />
+
             <label>Teacher Name</label>
             <input
               type="text"
@@ -95,15 +157,21 @@ const Teacher = () => {
               required
             />
 
-            <label>Subject Specialist (Optional)</label>
-            <input
-              type="text"
+            <label>Subject Specialist</label>
+            <select
               value={formData.subject}
               name="subject"
-              placeholder="Enter Subject"
               onChange={handleChange}
               className={Style.input}
-            />
+              required
+            >
+              <option value="">Select Subject</option>
+              {subjectList.map((subj) => (
+                <option key={subj} value={subj.toLowerCase()}>
+                  {subj}
+                </option>
+              ))}
+            </select>
 
             <label>Email</label>
             <input
@@ -182,37 +250,38 @@ const Teacher = () => {
         </div>
 
         <div className={Style.table_container}>
-  <table className={Style.basic_table}>
-    <thead>
-      <tr>
-        <th>Teacher Name</th>
-        <th>Email</th>
-        <th>Contact</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {loading ? <tr>
-          <td>Loading...</td>
-          <td>Loading...</td>
-          <td>Loading...</td>
-          <td>
-            Loading...
-          </td>
-        </tr> :teachertabel && teachertabel.map((val: any, index: any) => (
-        <tr key={index}>
-          <td>{val.teacherName}</td>
-          <td>{val.email}</td>
-          <td>{val.contact}</td>
-          <td>
-          <DeleteModal Deleteid={val.id} />
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
-
+          <table className={Style.basic_table}>
+            <thead>
+              <tr>
+                <th>Teacher ID</th>
+                <th>Teacher Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={5}>Loading...</td>
+                </tr>
+              ) : (
+                teachertabel &&
+                teachertabel.map((val: any, index: any) => (
+                  <tr key={index}>
+                    <td>{val.teacherId}</td>
+                    <td>{val.teacherName}</td>
+                    <td>{val.email}</td>
+                    <td>{val.contact}</td>
+                    <td>
+                      <DeleteModal Deleteid={val.id} subject={val.subject} Selectedclass={undefined} />
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );

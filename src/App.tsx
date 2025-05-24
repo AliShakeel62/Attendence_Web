@@ -13,6 +13,7 @@ import AddClasses from "./Pages/AddClasses";
 import Teacher from "./Pages/Teacher";
 import AddStudent from "./Pages/AddStudent";
 import Attendence from "./Pages/Attendence";
+import TeacherAttendence from "./Pages/Teacher_Attendance";
 
 
 function App() {
@@ -41,8 +42,10 @@ function App() {
   , {
     path:"/attendence",
     element:<Attendence/>
+  },{
+    path:"/teacher_attendence",
+    element:<TeacherAttendence/>
   }
-
  ])
  return <>
  

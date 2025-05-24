@@ -5,6 +5,7 @@ import { getDatabase, push, ref, set, onValue } from "firebase/database";
 import app from "../Firebase/FirebaseConfig";
 import DeleteModal from "../Component/Deletemodal";
 import Style from "../Style/addstudent.module.css";
+import DeleteStudentModal from "../Component/DeleteStudentModal";
 
 export default function AddStudent() {
   const [datatable, setDatatable] = useState<any>([]);
@@ -24,17 +25,50 @@ export default function AddStudent() {
 
   useEffect(() => {
     const db = getDatabase(app);
-    const studentRef = ref(db, "student_detail");
+    const studentRef = ref(db, `student_detail/`);
     setLoading(true);
+
     onValue(studentRef, (res) => {
       const data = res.val();
-      const studentList = data
-        ? Object.keys(data).map((key) => ({ id: key, ...data[key] }))
-        : [];
+      const studentList: any[] = [];
+
+      if (data) {
+        Object.keys(data).forEach((classKey) => {
+          const studentsInClass = data[classKey];
+          Object.keys(studentsInClass).forEach((studentId) => {
+            studentList.push({
+              id: studentId,
+              studentClass: classKey,
+              ...studentsInClass[studentId],
+            });
+          });
+        });
+      }
+
       setDatatable(studentList);
       setLoading(false);
     });
   }, []);
+
+  const handleChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, files } = e.target;
+
+    if (name === "picture" && files && files[0]) {
+      const file = files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        setFormData((prev) => ({
+          ...prev,
+          picture: reader.result as string,
+        }));
+      };
+
+      reader.readAsDataURL(file);
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -42,11 +76,11 @@ export default function AddStudent() {
   };
 
   const addOrUpdateStudent = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevent page reload on form submission
+    e.preventDefault();
     setIsSubmitting(true);
     const db = getDatabase(app);
-  //  const studentKey = push(ref(db, `student_detail/`)).key;
-    set(ref(db, `student_detail/${formData.studentClass}`), formData)
+    const studentKey = push(ref(db, `student_detail/`)).key;
+    set(ref(db, `student_detail/${formData.studentClass}/${studentKey}`), formData)
       .then(() => console.log("Student added successfully"))
       .catch((error) => console.error("Error adding student:", error));
 
@@ -62,7 +96,7 @@ export default function AddStudent() {
     });
     setIsSubmitting(false);
   };
-
+console.log(datatable.id)
   return (
     <>
       <Navbar />
@@ -181,8 +215,7 @@ export default function AddStudent() {
               <input
                 type="file"
                 name="picture"
-                value={formData.picture}
-                onChange={handleChange}
+                onChange={handleChanges}
                 className={Style.inp}
                 required
               />
@@ -193,6 +226,7 @@ export default function AddStudent() {
             </button>
           </form>
 
+          {/* Student Table */}
           <div className={Style.tableContainer}>
             {loading ? (
               <p>Loading data...</p>
@@ -210,12 +244,12 @@ export default function AddStudent() {
                 <tbody>
                   {datatable.map((item: any, index: any) => (
                     <tr key={index}>
-                      <td>{item.firstName}</td>
+                      <td>{item.firstName} {item.lastName}</td>
                       <td>{item.fatherName}</td>
                       <td>{item.studentId}</td>
                       <td>{item.attendence}</td>
                       <td>
-                        <DeleteModal Deleteid={item.id} />
+                         <DeleteStudentModal Selectedclass={item.studentClass} Deleteid={item.id} />
                       </td>
                     </tr>
                   ))}

@@ -1,64 +1,61 @@
 import Navbar from "../Component/Navbar";
 import Style from "../Style/Attendence.module.css";
-import "../../node_modules/bootstrap/dist/css/bootstrap-grid.min.css";
-import { collection, query, where, getDocs, getFirestore } from "firebase/firestore";
-import app from "../Firebase/FirebaseConfig"; // path depends on where your firebase.js is
-import { getDatabase, ref, child, get } from "firebase/database";
+import "../../node_modules/bootstrap/dist/css/bootstrap-grid.css";
+import { getDatabase, ref, get, set } from "firebase/database";
+import '../../node_modules/bootstrap-icons/font/bootstrap-icons.css';
 import { useState } from "react";
-
 
 export default function Attendence() {
   const [showClass, setShowClass] = useState(false);
-  const [showType, setShowType] = useState(false);
   const [showDate, setShowDate] = useState(false);
 
-
   const [selectedClass, setSelectedClass] = useState("");
-  const [selectedType, setSelectedType] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
-  type StudentData = {
-    id: string;
-    name: string;
-    class: string;
-    rollNo: string;
-  };
 
-  const db = getFirestore(app)
-  const [resultData, setResultData] = useState<any>([]);
-  const [loading, setLoading] = useState(false);
+  const [filteredData, setFilteredData] = useState<any[]>([]);
 
+  const fetchAttendanceData = async (selectedClass: string) => {
+    try {
+      const db = getDatabase();
+      const snapshot = await get(ref(db, `student_detail/${selectedClass}`));
 
- const fetchAttendanceData = async (selectedClass: string, selectedType: string) => {
-  try {
-    const db = getDatabase();
-    const snapshot = await get(ref(db, `${selectedType}/${selectedClass}`));
-
-    if (snapshot.exists()) {
-      const data = snapshot.val();
-      console.log(data)
-      const filteredData = Object.entries(data)
-        .filter(([key, value]: any) => 
-          value.studentClass === selectedClass &&
-          value.type === selectedType.toLowerCase()
-        )
-        .map(([id, value]: any) => ({
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const allData = Object.entries(data).map(([id, value]: any) => ({
           id,
           ...value,
         }));
-
-      console.log("Filtered Data:", filteredData);
-    } else {
-      console.log("No data available");
+        setFilteredData(allData);
+      } else {
+        setFilteredData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching student data:", error);
     }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
+  };
+
+  // ✅ Attendance Saving Function
+  const markAttendance = async (studentId: string, status: "present" | "absent") => {
+    if (!selectedClass || !selectedDate) {
+      alert("Please select class and date first.");
+      return;
+    }
+
+    try {
+      const db = getDatabase();
+      const attendanceRef = ref(db, `attendance/${selectedClass}/${selectedDate}/${studentId}`);
+      await set(attendanceRef, status);
+      console.log(`Marked ${status} for ${studentId}`);
+    } catch (error) {
+      console.error("Error marking attendance:", error);
+    }
+  };
+console.log(filteredData)
   return (
     <>
       <Navbar />
       <main className={Style.main}>
-        <h1>Attendencs</h1>
+        <h1>Student Attendance</h1>
 
         <div className={Style.inpdiv}>
           <div style={{ position: "relative" }}>
@@ -77,162 +74,84 @@ export default function Attendence() {
                   position: "absolute",
                   background: "white",
                   width: "100%",
+                  zIndex: 1000,
                 }}
               >
-                <div
-                  onClick={() => {
-                    setSelectedClass("Class I");
-                    setShowClass(false);
-                  }}
-                  className={Style.inpdivs}
-                >
-                  Class I
-                </div>
-                <div
-                  onClick={() => {
-                    setSelectedClass("Class II");
-                    setShowClass(false);
-                  }}
-                  className={Style.inpdivs}
-                >
-                  Class II
-                </div>
-                <div
-                  onClick={() => {
-                    setSelectedClass("Class III");
-                    setShowClass(false);
-                  }}
-                  className={Style.inpdivs}
-                >
-                  Class III
-                </div>
-                <div
-                  onClick={() => {
-                    setSelectedClass("Class IV");
-                    setShowClass(false);
-                  }}
-                  className={Style.inpdivs}
-                >
-                  Class IV
-                </div>
-                <div
-                  onClick={() => {
-                    setSelectedClass("Class V");
-                    setShowClass(false);
-                  }}
-                  className={Style.inpdivs}
-                >
-                  Class V
-                </div>
-                <div
-                  onClick={() => {
-                    setSelectedClass("Class VI");
-                    setShowClass(false);
-                  }}
-                  className={Style.inpdivs}
-                >
-                  Class VI
-                </div>
-                <div
-                  onClick={() => {
-                    setSelectedClass("Class VII");
-                    setShowClass(false);
-                  }}
-                  className={Style.inpdivs}
-                >
-                  Class VII
-                </div>
-                <div
-                  onClick={() => {
-                    setSelectedClass("Class VIII");
-                    setShowClass(false);
-                  }}
-                  className={Style.inpdivs}
-                >
-                  Class VIII
-                </div>
-                <div
-                  onClick={() => {
-                    setSelectedClass("Class IX");
-                    setShowClass(false);
-                  }}
-                  className={Style.inpdivs}
-                >
-                  Class IX
-                </div>
-                <div
-                  onClick={() => {
-                    setSelectedClass("Class X");
-                    setShowClass(false);
-                  }}
-                  className={Style.inpdivs}
-                >
-                  Class X
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div style={{ position: "relative" }}>
-            <label>Attendance type</label>
-            <input
-              type="text"
-              value={selectedType}
-              className={Style.inp}
-              onClick={() => setShowType(!showType)}
-              readOnly
-            />
-            {showType && (
-              <div
-                style={{
-                  border: "1px solid black",
-                  position: "absolute",
-                  background: "white",
-                  width: "100%",
-                }}
-              >
-                <div
-                  onClick={() => {
-                    setSelectedType("student_detail");
-                    setShowType(false);
-                  }}
-                  className={Style.inpdivs}
-                >
-                  Student
-                </div>
-                <div
-                  onClick={() => {
-                    setSelectedType("Teacher");
-                    setShowType(false);
-                  }}
-                  className={Style.inpdivs}
-                >
-                  teacher
-                </div>
-                <div
-                  onClick={() => {
-                    setSelectedType("Staff");
-                    setShowType(false);
-                  }}
-                  className={Style.inpdivs}
-                >
-                  Staff
-                </div>
+                {[
+                  "Class I", "Class II", "Class III", "Class IV",
+                  "Class V", "Class VI", "Class VII", "Class VIII",
+                  "Class IX", "Class X"
+                ].map(cls => (
+                  <div
+                    key={cls}
+                    onClick={() => {
+                      setSelectedClass(cls);
+                      setShowClass(false);
+                    }}
+                    className={Style.inpdivs}
+                  >
+                    {cls}
+                  </div>
+                ))}
               </div>
             )}
           </div>
 
           <div style={{ position: "relative" }}>
             <label>Attendance Date</label>
-            <input type="date" value={selectedDate} className={Style.inp} />
+            <input
+              type="date"
+              value={selectedDate}
+              className={Style.inp}
+              onChange={e => setSelectedDate(e.target.value)}
+            />
           </div>
+
           <button
             className={Style.btn}
-            onClick={() => fetchAttendanceData(selectedClass, selectedType)}
+            onClick={() => fetchAttendanceData(selectedClass)}
+            disabled={!selectedClass}
           >
             Take Attendance
           </button>
         </div>
+
+<div className="container mt-5">
+  <div className="row g-4">
+    {filteredData.map((student, index) => (
+      <div key={index} className="col-6 col-md-3 d-flex justify-content-center">
+        <div className="card p-3 text-center" style={{ width: "100%", maxWidth: "200px" }}>
+          {student.picture ? (
+            <img
+              src={student.picture}
+              alt="profile"
+              className="rounded-circle mx-auto"
+              style={{ width: "80px", height: "80px", objectFit: "cover" }}
+            />
+          ) : (
+            <i className="bi bi-person-circle text-primary" style={{ fontSize: "60px" }}></i>
+          )}
+          <p className="fw-bold mt-2">{student.firstName}</p>
+          <div className="d-flex justify-content-between mt-2">
+            <button
+              className="btn btn-outline-dark btn-sm w-100 me-1"
+              onClick={() => markAttendance(student.studentId, "present")}
+            >
+              Present
+            </button>
+            <button
+              className="btn btn-outline-danger btn-sm w-100 ms-1"
+              onClick={() => markAttendance(student.studentId, "absent")}
+            >
+              Absent
+            </button>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
       </main>
     </>
   );

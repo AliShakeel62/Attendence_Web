@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal, Space } from "antd";
 import { remove, ref, getDatabase } from "firebase/database";
 import app from "../Firebase/FirebaseConfig";
-const DeleteModal = ({Deleteid}:{Deleteid: any}) => {
+const DeleteModal = ({Deleteid,subject,Selectedclass}:{Deleteid: any , subject: any ,Selectedclass:any}) => {
   const DeleteClasses = (id: number) => {
     const db = getDatabase(app);
     remove(ref(db, `class_detail/${id}`))
@@ -11,16 +11,17 @@ const DeleteModal = ({Deleteid}:{Deleteid: any}) => {
   };
   const DeleteTeacher = (id: number) => {
     const db = getDatabase(app);
-    remove(ref(db, `teacher_info/${id}`))
+    remove(ref(db, `teacher_info/${subject}`))
       .then(() => console.log("Class deleted successfully"))
       .catch((error) => console.error("Error deleting class:", error));
   };
 
   const DeleteStudent = (id: number) => {
     const db = getDatabase(app);
-    remove(ref(db, `student_detail/${id}`))
+    remove(ref(db, `student_detail/${Selectedclass}/${Deleteid}`))
       .then(() => console.log("Class deleted successfully"))
       .catch((error) => console.error("Error deleting class:", error));
+      console.log(id)
   };
   const [open, setOpen] = useState(false);
 

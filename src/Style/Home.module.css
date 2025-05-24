@@ -1,0 +1,43 @@
+*{
+    padding: 0%;
+    margin: 0%;
+}
+.main{
+    height: 100%;
+    width: 100%;
+    position: relative;
+    background-color: whitesmoke;
+}
+.card_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.card_box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-width: 220px;
+  width: 100%;
+}
+
+.count {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.main {
+  min-height: 100%;
+}
+
+
+@media (max-width: 768px) {
+  .dataTable-container {
+    overflow-x: auto;
+  }
+}

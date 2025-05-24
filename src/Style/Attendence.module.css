@@ -1,14 +1,17 @@
+/* Input section styles */
 .inpdiv {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 5px;
+  margin-bottom: 20px;
 }
 
-.inpdivs:hover{
+.inpdivs:hover {
   background-color: black;
   color: white;
 }
+
 .inp {
   width: 20vw;
   padding: 5px;
@@ -36,10 +39,96 @@
   color: white;
 }
 
+/* Card container with grid */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 20px;
+  justify-items: center;
+}
+
+/* Individual student card */
+.cards {
+  border: 2px solid black;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 15px;
+  width: 100%;
+  max-width: 200px;
+  min-height: 240px;
+  background-color: white;
+  box-sizing: border-box;
+  transition: 0.3s ease;
+}
+
+/* Buttons wrapper */
+.btn_div {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Present/Absent buttons */
+.btn_p,
+.btn_danger {
+  flex: 1;
+  font-size: 14px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: white;
+  color: black;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn_p:hover {
+  background: black;
+  color: white;
+}
+
+.btn_danger:hover {
+  background: red;
+  color: white;
+}
+
+/* Medium screens: show 2 cards per row */
+@media (max-width: 768px) {
+  .card-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cards {
+    max-width: 100%;
+  }
+
+  .btn_div {
+    flex-direction: row;
+  }
+}
+
+/* Small screens: 2 cards per row, tighter spacing */
 @media (max-width: 500px) {
-  .inpdiv {
-    justify-content: flex-start;
-    gap: 10px;
+  .card-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .cards {
+    min-height: 220px;
+    padding: 10px;
+  }
+
+  .btn_p,
+  .btn_danger {
+    font-size: 13px;
+    padding: 6px;
   }
 
   .inp {
@@ -47,7 +136,9 @@
   }
 
   .btn {
-    width: 35%;
+    width: 90%;
     margin-top: 12px;
+    font-size: 14px;
+    padding: 8px;
   }
 }
