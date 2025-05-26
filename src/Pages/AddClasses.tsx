@@ -144,7 +144,7 @@ export default function AddClasses() {
                         <Model onedit={item.id} />
                       </td>
                       <td>
-                        <DeleteModal Deleteid={item.id} />
+                        <DeleteModal Deleteid={item.id} subject={""} Selectedclass={""} />
                       </td>
                     </tr>
                   ))}
